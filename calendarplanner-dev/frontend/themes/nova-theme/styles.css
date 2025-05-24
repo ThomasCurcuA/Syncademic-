@@ -1,0 +1,80 @@
+@import "theme-editor.css";
+.building-box {
+	width: 400px;
+	height: 200px;
+	margin:10px;
+	padding: 40px;
+	cursor: pointer;
+	background-color: #BAF;
+	border-radius: 20px;
+}
+
+.building-box:hover{
+	background-color: #CBF;
+}
+
+.building-name{
+	font: 25px Arial;
+}
+
+
+.room-box {
+	width: 200px;
+	height: 200px;
+	margin:10px;
+	padding: 20px;
+	cursor: pointer;
+	background-color: #FAB;
+	border-radius: 20px;
+}
+
+.room-box:hover{
+	background-color: #FBC;
+}
+
+.room-name{
+	font: 25px Arial;
+}
+
+
+.add-building-box {
+	width: 400px;
+	height: 200px;
+	margin:10px;
+	padding: 40px;
+	cursor: pointer;
+	background-color: #F5F5F5F5;
+	border-radius: 20px;
+	border: 2px dashed #bbb;
+	font: 50px Arial;
+	color: #bbb
+}
+
+.add-building-box:hover{
+	color: #555;
+	 border-color: #555;
+}
+
+
+.add-room-box {
+	width: 200px;
+	height: 200px;
+	margin:10px;
+	padding: 40px;
+	cursor: pointer;
+	background-color: #F5F5F5F5;
+	border-radius: 20px;
+	border: 2px dashed #bbb;
+	font: 50px Arial;
+	color: #bbb
+}
+
+.add-room-box:hover{
+	color: #555;
+	border-color: #555;
+}
+
+.add-building-box:hover{
+	color: #555;
+	 border-color: #555;
+}
