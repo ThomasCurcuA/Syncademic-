@@ -1,0 +1,20 @@
+<configuration>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/application.log</file>
+        <encoder>
+            <pattern>%date - [%level] - from %logger in %thread %n%message%n%xException%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%green(%d{ISO8601}) %highlight(%-5level) %yellow(%C{1}): %msg%n%throwable</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+    </root>
+
+</configuration>
