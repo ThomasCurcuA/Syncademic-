@@ -1,11 +1,16 @@
-
 spring:
   datasource:
-    url: jdbc:mysql://localhost/courses
+    url: jdbc:mysql://localhost:3306/courses
     username: test
     password: test
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     open-in-view: false
     hibernate:
       ddl-auto: update
-    show-sql: false
+    show-sql: true
+  profiles:
+    active: default
+
+server:
+  port: 8080
