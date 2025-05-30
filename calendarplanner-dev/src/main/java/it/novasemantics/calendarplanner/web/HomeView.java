@@ -18,47 +18,33 @@ public class HomeView extends VerticalLayout {
         setPadding(true);
         setSpacing(true);
 
-        H2 title = new H2("Calendar Planner");
-        add(title);
+        add(new H2("Calendar Planner"));
 
-        HorizontalLayout row = new HorizontalLayout();
-        row.setSpacing(true);
-        row.setWidthFull();
-
-        row.add(
+        HorizontalLayout row = new HorizontalLayout(
             createCard("Gestione Edificio", "Vai alla gestione edificio singolo", "building", VaadinIcon.BUILDING),
             createCard("Lista Edifici", "Visualizza tutti gli edifici", "buildings", VaadinIcon.LIST),
-            createCard("Gestione Aula", "Vai alla gestione delle aule", "room", VaadinIcon.ARCHIVES)
+            createCard("Gestione Aula", "Vai alla gestione delle aule", "room", VaadinIcon.NOTEBOOK)
         );
+        row.setSpacing(true);
+        row.setWidthFull();
 
         add(row);
     }
 
     private Div createCard(String title, String description, String route, VaadinIcon iconType) {
         Div card = new Div();
-        card.getStyle()
-            .set("border", "1px solid #ccc")
-            .set("border-radius", "12px")
-            .set("padding", "1rem")
-            .set("min-width", "200px")
-            .set("max-width", "300px")
-            .set("cursor", "pointer")
-            .set("box-shadow", "0 2px 5px rgba(0, 0, 0, 0.1)")
-            .set("background-color", "#fafafa")
-            .set("margin-right", "1rem")
-            .set("text-align", "center");
-
+        card.addClassName("card");
         card.addClickListener(e -> card.getUI().ifPresent(ui -> ui.navigate(route)));
 
         Icon icon = iconType.create();
         icon.setSize("40px");
-        icon.getStyle().set("color", "#1676f3").set("margin-bottom", "0.5rem");
+        icon.addClassName("card-icon");
 
         H2 header = new H2(title);
-        header.getStyle().set("font-size", "1.25rem").set("margin", "0");
+        header.addClassName("card-title");
 
         Paragraph desc = new Paragraph(description);
-        desc.getStyle().set("font-size", "0.9rem").set("color", "#666");
+        desc.addClassName("card-description");
 
         card.add(icon, header, desc);
         return card;
