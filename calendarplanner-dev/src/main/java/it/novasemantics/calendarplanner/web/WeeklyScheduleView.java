@@ -9,27 +9,34 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.UIScope;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+@Slf4j
+@UIScope
 @Route("weekly-schedule")
 public class WeeklyScheduleView extends VerticalLayout {
 
+    private static final long serialVersionUID = 7526471155622776147L;
+
     private LocalDate currentMonday = LocalDate.now().with(DayOfWeek.MONDAY);
     private final Map<LocalDate, List<Row>> weeklyRows = new HashMap<>();
-
     private final Grid<Row> grid = new Grid<>();
     private final H1 title = new H1("Orario Settimanale");
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM");
 
-    public WeeklyScheduleView() {
-        addClassName("schedule-view");
+    @PostConstruct
+    public void init() {
         setSizeFull();
-
-        title.addClassName("schedule-title");
+        setSpacing(false);
+        setPadding(true);
+        addClassName("schedule-view");
 
         configureGrid();
 
@@ -38,20 +45,15 @@ public class WeeklyScheduleView extends VerticalLayout {
 
         HorizontalLayout navigation = new HorizontalLayout(prevWeek, nextWeek);
         navigation.setSpacing(true);
+        navigation.setWidthFull();
+        navigation.getStyle().setMarginBottom("20px");
+
+        title.addClassName("schedule-title");
 
         add(title, navigation, grid);
+
         updateGridHeaders();
         grid.setItems(getOrCreateRows(currentMonday));
-    }
-
-    private List<Row> getOrCreateRows(LocalDate monday) {
-        return weeklyRows.computeIfAbsent(monday, m -> {
-            List<Row> newRows = new ArrayList<>();
-            for (int hour = 9; hour < 18; hour++) {
-                newRows.add(new Row(String.format("%02d:00 - %02d:00", hour, hour + 1)));
-            }
-            return newRows;
-        });
     }
 
     private void configureGrid() {
@@ -59,15 +61,14 @@ public class WeeklyScheduleView extends VerticalLayout {
         grid.setWidthFull();
         grid.addClassName("schedule-grid");
 
-        // Colonna orari
         grid.addColumn(Row::getTime).setHeader("Orario").setAutoWidth(true);
 
         Editor<Row> editor = grid.getEditor();
-        editor.setBuffered(false); // Salvataggio automatico
+        editor.setBuffered(false); // salvataggio automatico
         Binder<Row> binder = new Binder<>(Row.class);
         editor.setBinder(binder);
 
-        // 5 giorni (lun-ven)
+        // 5 giorni: lun → ven
         for (int i = 0; i < 5; i++) {
             final int index = i;
 
@@ -81,7 +82,6 @@ public class WeeklyScheduleView extends VerticalLayout {
                     (row, value) -> {
                         row.getEntries().set(index, value);
                         grid.getDataProvider().refreshItem(row);
-                        // 🔽 Qui potresti anche salvare su DB: saveToDatabase(currentMonday, row, index, value);
                     }
             );
 
@@ -90,6 +90,16 @@ public class WeeklyScheduleView extends VerticalLayout {
         }
 
         grid.addItemDoubleClickListener(event -> editor.editItem(event.getItem()));
+    }
+
+    private List<Row> getOrCreateRows(LocalDate monday) {
+        return weeklyRows.computeIfAbsent(monday, m -> {
+            List<Row> newRows = new ArrayList<>();
+            for (int hour = 9; hour < 18; hour++) {
+                newRows.add(new Row(String.format("%02d:00 - %02d:00", hour, hour + 1)));
+            }
+            return newRows;
+        });
     }
 
     private void updateWeek(LocalDate newMonday) {
@@ -111,8 +121,10 @@ public class WeeklyScheduleView extends VerticalLayout {
         return word.charAt(0) + word.substring(1).toLowerCase();
     }
 
-    // === Classe riga della griglia ===
     public static class Row {
+    	
+    	private static final long serialVersionUID = 8150323952244061049L;
+    	
         private final String time;
         private final List<String> entries = new ArrayList<>(Collections.nCopies(5, ""));
 
