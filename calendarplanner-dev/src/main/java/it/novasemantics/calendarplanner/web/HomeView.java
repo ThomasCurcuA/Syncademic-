@@ -36,7 +36,8 @@ public class HomeView extends VerticalLayout {
         menuRow.add(
             new MenuCard("Gestione Edificio", "Vai alla gestione edificio singolo", "building", VaadinIcon.BUILDING),
             new MenuCard("Lista Edifici", "Visualizza tutti gli edifici", "buildings", VaadinIcon.LIST),
-            new MenuCard("Gestione Aula", "Vai alla gestione delle aule", "room", VaadinIcon.NOTEBOOK)
+            new MenuCard("Gestione Aula", "Vai alla gestione delle aule", "room", VaadinIcon.NOTEBOOK),
+            new MenuCard("Visualizzazione orario", "Vai alla visualizzazione dell'orario", "weekly-schedule", VaadinIcon.ALARM)
         );
 
         add(title, menuRow);
