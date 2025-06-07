@@ -1,6 +1,8 @@
 package it.novasemantics.calendarplanner.web;
 
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.H1;
@@ -30,6 +32,7 @@ public class WeeklyScheduleView extends VerticalLayout {
     private final Grid<Row> grid = new Grid<>();
     private final H1 title = new H1("Orario Settimanale");
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM");
+    private DatePicker datePicker;
 
     @PostConstruct
     public void init() {
@@ -40,10 +43,22 @@ public class WeeklyScheduleView extends VerticalLayout {
 
         configureGrid();
 
+        // Pulsanti per navigare tra le settimane
         Button prevWeek = new Button("← Settimana precedente", e -> updateWeek(currentMonday.minusWeeks(1)));
         Button nextWeek = new Button("Settimana successiva →", e -> updateWeek(currentMonday.plusWeeks(1)));
 
-        HorizontalLayout navigation = new HorizontalLayout(prevWeek, nextWeek);
+        // DatePicker per selezionare una data qualsiasi nella settimana
+        datePicker = new DatePicker();
+        datePicker.setValue(LocalDate.now());
+        datePicker.addValueChangeListener(e -> {
+            LocalDate selected = e.getValue();
+            if (selected != null) {
+                LocalDate monday = selected.with(DayOfWeek.MONDAY);
+                updateWeek(monday);
+            }
+        });
+
+        HorizontalLayout navigation = new HorizontalLayout(prevWeek, datePicker, nextWeek);
         navigation.setSpacing(true);
         navigation.setWidthFull();
         navigation.getStyle().setMarginBottom("20px");
@@ -68,7 +83,6 @@ public class WeeklyScheduleView extends VerticalLayout {
         Binder<Row> binder = new Binder<>(Row.class);
         editor.setBinder(binder);
 
-        // 5 giorni: lun → ven
         for (int i = 0; i < 5; i++) {
             final int index = i;
 
@@ -86,10 +100,16 @@ public class WeeklyScheduleView extends VerticalLayout {
             );
 
             column.setEditorComponent(field);
+
+            // Chiudi editor con Invio o Escape
+            field.addKeyDownListener(Key.ENTER, e -> editor.save());
+            field.addKeyDownListener(Key.ESCAPE, e -> editor.cancel());
+
             column.setHeader("Giorno " + (index + 1));
         }
 
-        grid.addItemDoubleClickListener(event -> editor.editItem(event.getItem()));
+        // Apri editor al doppio click sulla cella
+        grid.addItemDoubleClickListener(event -> grid.getEditor().editItem(event.getItem()));
     }
 
     private List<Row> getOrCreateRows(LocalDate monday) {
@@ -104,6 +124,8 @@ public class WeeklyScheduleView extends VerticalLayout {
 
     private void updateWeek(LocalDate newMonday) {
         currentMonday = newMonday;
+        datePicker.setValue(LocalDate.now().isBefore(newMonday) || LocalDate.now().isAfter(newMonday.plusDays(6))
+                ? newMonday : LocalDate.now());
         updateGridHeaders();
         grid.setItems(getOrCreateRows(currentMonday));
     }
@@ -122,9 +144,9 @@ public class WeeklyScheduleView extends VerticalLayout {
     }
 
     public static class Row {
-    	
-    	private static final long serialVersionUID = 8150323952244061049L;
-    	
+
+        private static final long serialVersionUID = 8150323952244061049L;
+
         private final String time;
         private final List<String> entries = new ArrayList<>(Collections.nCopies(5, ""));
 
