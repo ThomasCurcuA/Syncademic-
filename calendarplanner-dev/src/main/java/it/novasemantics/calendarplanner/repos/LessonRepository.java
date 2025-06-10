@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import it.novasemantics.calendarplanner.model.Lesson;
+import it.novasemantics.calendarplanner.models.Lesson;
 
 @Repository
 public interface LessonRepository extends JpaRepository<Lesson, Long> {
